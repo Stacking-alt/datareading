@@ -1,130 +1,206 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <link rel="stylesheet" href="admin.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <title>Admin Dashboard</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="admin.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <style>
-    table { width: 100%; border-collapse: collapse; }
-    th, td { border: 1px solid #ccc; padding: 8px; }
-    th { background: #f5f5f5; }
-  </style>
 </head>
-<nav class="admin-navbar">
-  <div class="nav-container">
-    <div class="nav-logo">
-      <i class="fas fa-database"></i>
-      <span>DataPro</span>
-    </div>
+<body>
 
-    <div class="nav-links">
-      <a href="admin-login.html" class="nav-link admin-btn">
-        <i class="fas fa-lock"></i> Admin Panel
-      </a>
+<!-- ADMIN NAVBAR -->
+<nav class="admin-navbar">
+  <div class="admin-nav-container">
+    <div class="admin-logo">
+      <i class="fas fa-database"></i>
+      <span>DataPro Admin</span>
+    </div>
+    <div class="admin-actions">
+      <button class="home-btn" onclick="goHome()">
+        <i class="fas fa-home"></i> Home
+      </button>
+      <button onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
     </div>
   </div>
 </nav>
 
-<body>
+<!-- MAIN CONTENT -->
+<main>
+  <div class="dashboard-header">
+    <h2><i class="fas fa-table"></i> Submitted Records</h2>
+    <button class="btn-download" onclick="exportCSV()">
+      <i class="fas fa-download"></i> Export to Excel
+    </button>
+  </div>
 
-  <button onclick="logout()">Logout</button>
-  <button class="home-btn" onclick="goHome()">🏠 Home</button>
+  <div class="table-container">
+    <table id="recordsTable">
+      <thead>
+        <tr>
+          <th>Zone</th>
+          <th>Address</th>
+          <th>Contact Number</th>
+          <th>Contact Person</th>
+          <th>2 Meter Number</th>
+          <th>Count of 1PH</th>
+          <th>Count of 3PH</th>
+          <th>Count of WC</th>
+          <th>Count of LTCT</th>
+          <th>Other Meter Type</th>
+          <th>Remarks</th>
+          <th>Supervisor Name</th>
+          <th>Date & Time</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+        <!-- Data will be loaded here -->
+      </tbody>
+    </table>
+  </div>
+</main>
 
 <script>
-function logout() {
-  sessionStorage.removeItem("adminLoggedIn");
-  window.location.href = "admin-login.html";
-}
-</script>
+  // Check if admin is logged in
+  if (sessionStorage.getItem("adminLoggedIn") !== "true") {
+    window.location.href = "admin-login.html";
+  }
 
-<script>
+  // Initialize Supabase client
+  const supabaseClient = supabase.createClient(
+    "https://lmjuchokvqwaozhrawgh.supabase.co",
+    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtanVjaG9rdnF3YW96aHJhd2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5OTYxOTgsImV4cCI6MjA4MTU3MjE5OH0._eRy72ZfRBINluNn_penTibl9rUWdaAcec6b5N-oxYg"
+  );
+
+  // Navigation functions
   function goHome() {
-    window.location.href = "index.html"; // home page
+    window.location.href = "index.html";
   }
 
   function logout() {
+    sessionStorage.removeItem("adminLoggedIn");
     window.location.href = "admin-login.html";
   }
-</script>
 
+  // Load data from Supabase
+  async function loadData() {
+    const { data, error } = await supabaseClient
+      .from("records3")
+      .select("*")
+      .order("created_at", { ascending: false });
 
-<div class="dashboard-header">
-<h2>Submitted Records</h2>
-<button onclick="exportCSV()">Export to Excel</button>
-</div>
+    if (error) {
+      console.error("Error loading data:", error);
+      document.getElementById("tableBody").innerHTML = `
+        <tr>
+          <td colspan="13" class="no-data">
+            <i class="fas fa-exclamation-triangle"></i> Error loading data
+          </td>
+        </tr>
+      `;
+      return;
+    }
 
-<div class="table-container"></div>
-<table id="table">
-  <thead>
-    <tr>
-      <th>Zone</th>
-      <th>Address</th>
-      <th>Contact</th>
-      <th>Person</th>
-      <th>1PH</th>
-      <th>3PH</th>
-      <th>WC</th>
-      <th>LTCT</th>
-      <th>Remarks</th>
-      <th>Supervisor</th>
-      <th>Date</th>
-    </tr>
-  </thead>
-  <tbody></tbody>
-</table>
+    const tbody = document.getElementById("tableBody");
+    
+    if (!data || data.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="13" class="no-data">
+            <i class="fas fa-inbox"></i> No records found
+          </td>
+        </tr>
+      `;
+      return;
+    }
 
-<script>
-const supabaseClient = supabase.createClient(
-  "https://lmjuchokvqwaozhrawgh.supabase.co",
-  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtanVjaG9rdnF3YW96aHJhd2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5OTYxOTgsImV4cCI6MjA4MTU3MjE5OH0._eRy72ZfRBINluNn_penTibl9rUWdaAcec6b5N-oxYg"
-);
+    // Clear existing rows
+    tbody.innerHTML = "";
 
+    // Add data rows
+    data.forEach(record => {
+      const row = document.createElement("tr");
+      
+      // Format date
+      const dateObj = new Date(record.created_at);
+      const formattedDate = dateObj.toLocaleDateString('en-GB', {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric'
+      });
+      const formattedTime = dateObj.toLocaleTimeString('en-GB', {
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+      
+      row.innerHTML = `
+        <td>${record.zone || ""}</td>
+        <td>${record.address || ""}</td>
+        <td>${record.contact_number || ""}</td>
+        <td>${record.contact_person || ""}</td>
+        <td>${record.meter_2_number || ""}</td>
+        <td>${record.count_1ph || 0}</td>
+        <td>${record.count_3ph || 0}</td>
+        <td>${record.count_wc || 0}</td>
+        <td>${record.count_ltct || 0}</td>
+        <td>${record.other_meter || ""}</td>
+        <td>${record.remarks || ""}</td>
+        <td>${record.supervisor_name || ""}</td>
+        <td>
+          <span class="date-badge">${formattedDate}</span><br>
+          <span class="time-badge">${formattedTime}</span>
+        </td>
+      `;
+      
+      tbody.appendChild(row);
+    });
+  }
 
-async function loadData() {
-const { data, error } = await supabaseClient
-  .from("records3")
-  .select("*")
-  .order("created_at", { ascending: false });
+  // Export to CSV
+  function exportCSV() {
+    const rows = [];
+    const headers = [];
+    
+    // Get headers
+    document.querySelectorAll('#recordsTable thead th').forEach(th => {
+      headers.push(th.textContent.trim());
+    });
+    rows.push(headers);
+    
+    // Get data rows
+    document.querySelectorAll('#recordsTable tbody tr').forEach(tr => {
+      const row = [];
+      tr.querySelectorAll('td').forEach(td => {
+        // Extract text without badges formatting
+        if (td.querySelector('.date-badge') && td.querySelector('.time-badge')) {
+          const date = td.querySelector('.date-badge').textContent;
+          const time = td.querySelector('.time-badge').textContent;
+          row.push(`${date} ${time}`);
+        } else {
+          row.push(td.textContent.trim());
+        }
+      });
+      rows.push(row);
+    });
+    
+    const csvContent = rows.map(row => 
+      row.map(cell => `"${cell}"`).join(',')
+    ).join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `records_${new Date().toISOString().split('T')[0]}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+  }
 
-
-  const tbody = document.querySelector("tbody");
-  tbody.innerHTML = "";
-
-  data.forEach(r => {
-    tbody.innerHTML += `
-      <tr>
-        <td>${r.zone}</td>
-        <td>${r.address}</td>
-        <td>${r.contact_number}</td>
-        <td>${r.contact_person}</td>
-        <td>${r.count_1ph}</td>
-        <td>${r.count_3ph}</td>
-        <td>${r.count_wc}</td>
-        <td>${r.count_ltct}</td>
-        <td>${row.remarks || "-"}</td>
-        <td>${r.supervisor_name}</td>
-        <td>${new Date(r.created_at).toLocaleString()}</td>
-      </tr>
-    `;
-  });
-}
-
-function exportCSV() {
-  let rows = [["Zone","Address","Contact","Person","1PH","3PH","WC","LTCT","Supervisor","Date"]];
-  document.querySelectorAll("tbody tr").forEach(tr => {
-    rows.push([...tr.children].map(td => td.innerText));
-  });
-
-  let csv = rows.map(r => r.join(",")).join("\n");
-  let blob = new Blob([csv], { type: "text/csv" });
-  let a = document.createElement("a");
-  a.href = URL.createObjectURL(blob);
-  a.download = "records3.csv";
-  a.click();
-}
-
-loadData();
+  // Load data when page loads
+  document.addEventListener('DOMContentLoaded', loadData);
 </script>
 
 </body>
