@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="admin.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <title>Admin Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    table { width: 100%; border-collapse: collapse; }
+    th, td { border: 1px solid #ccc; padding: 8px; }
+    th { background: #f5f5f5; }
+  </style>
+</head>
+<nav class="admin-navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <i class="fas fa-database"></i>
+      <span>DataPro</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="admin-login.html" class="nav-link admin-btn">
+        <i class="fas fa-lock"></i> Admin Panel
+      </a>
+    </div>
+  </div>
+</nav>
+
+<body>
+
+  <button onclick="logout()">Logout</button>
+  <button class="home-btn" onclick="goHome()">🏠 Home</button>
+
+<script>
+function logout() {
+  sessionStorage.removeItem("adminLoggedIn");
+  window.location.href = "admin-login.html";
+}
+</script>
+
+<script>
+  function goHome() {
+    window.location.href = "index.html"; // home page
+  }
+
+  function logout() {
+    window.location.href = "admin-login.html";
+  }
+</script>
+
+
+<div class="dashboard-header">
+<h2>Submitted Records</h2>
+<button onclick="exportCSV()">Export to Excel</button>
+</div>
+
+<div class="table-container"></div>
+<table id="table">
+  <thead>
+    <tr>
+      <th>Zone</th>
+      <th>Address</th>
+      <th>Contact</th>
+      <th>Person</th>
+      <th>1PH</th>
+      <th>3PH</th>
+      <th>WC</th>
+      <th>LTCT</th>
+      <th>Remarks</th>
+      <th>Supervisor</th>
+      <th>Date</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<script>
+const supabaseClient = supabase.createClient(
+  "https://lmjuchokvqwaozhrawgh.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtanVjaG9rdnF3YW96aHJhd2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5OTYxOTgsImV4cCI6MjA4MTU3MjE5OH0._eRy72ZfRBINluNn_penTibl9rUWdaAcec6b5N-oxYg"
+);
+
+
+async function loadData() {
+const { data, error } = await supabaseClient
+  .from("records3")
+  .select("*")
+  .order("created_at", { ascending: false });
+
+
+  const tbody = document.querySelector("tbody");
+  tbody.innerHTML = "";
+
+  data.forEach(r => {
+    tbody.innerHTML += `
+      <tr>
+        <td>${r.zone}</td>
+        <td>${r.address}</td>
+        <td>${r.contact_number}</td>
+        <td>${r.contact_person}</td>
+        <td>${r.count_1ph}</td>
+        <td>${r.count_3ph}</td>
+        <td>${r.count_wc}</td>
+        <td>${r.count_ltct}</td>
+        <td>${row.remarks || "-"}</td>
+        <td>${r.supervisor_name}</td>
+        <td>${new Date(r.created_at).toLocaleString()}</td>
+      </tr>
+    `;
+  });
+}
+
+function exportCSV() {
+  let rows = [["Zone","Address","Contact","Person","1PH","3PH","WC","LTCT","Supervisor","Date"]];
+  document.querySelectorAll("tbody tr").forEach(tr => {
+    rows.push([...tr.children].map(td => td.innerText));
+  });
+
+  let csv = rows.map(r => r.join(",")).join("\n");
+  let blob = new Blob([csv], { type: "text/csv" });
+  let a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "records3.csv";
+  a.click();
+}
+
+loadData();
+</script>
+
+</body>
+</html>

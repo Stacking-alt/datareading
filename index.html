@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>DataPro System - Data Entry</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <link rel="stylesheet" href="style.css"/>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-container">
+    <div class="nav-logo">
+      <i class="fas fa-database"></i>
+      <span>DataPro</span>
+    </div>
+    <div class="nav-links">
+      <a href="index.html" class="nav-link active">
+        <i class="fas fa-plus-circle"></i> Submit Data
+      </a>
+      <a href="admin-login.html" class="nav-link">
+        <i class="fas fa-lock"></i> Admin Portal
+      </a>
+    </div>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main class="main-content">
+
+<section class="form-section">
+  <div class="container">
+
+    <div class="section-header">
+      <h2>Submit Details</h2>
+      <p>Fill all required information carefully</p>
+    </div>
+
+    <form id="readingForm">
+
+      <div class="form-grid">
+
+        <div class="form-column">
+          <div class="form-card">
+            <div class="card-header">
+              <i class="fas fa-map"></i>
+              <h3>Location & Contact</h3>
+            </div>
+
+            <div class="card-body">
+
+              <div class="form-group">
+                <label>Zone *</label>
+                <input type="text" id="zone" required>
+              </div>
+
+              <div class="form-group">
+                <label>Address *</label>
+                <textarea id="address" required></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Contact Number *</label>
+                <input type="text" id="contact_number" required>
+              </div>
+
+              <div class="form-group">
+                <label>Contact Person *</label>
+                <input type="text" id="contact_person" required>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+        <div class="form-column">
+          <div class="form-card">
+            <div class="card-header">
+              <i class="fas fa-bolt"></i>
+              <h3>Meter Details</h3>
+            </div>
+
+            <div class="card-body">
+
+              <div class="form-group">
+                <label>2 Meter Number</label>
+                <input type="text" id="meter_2_number">
+              </div>
+
+              <div class="form-group">
+                <label>Count of 1 Phase</label>
+                <input type="number" id="count_1ph">
+              </div>
+
+              <div class="form-group">
+                <label>Count of 3 Phase</label>
+                <input type="number" id="count_3ph">
+              </div>
+
+              <div class="form-group">
+                <label>Count of WC</label>
+                <input type="number" id="count_wc">
+              </div>
+
+              <div class="form-group">
+                <label>Count of LTCT</label>
+                <input type="number" id="count_ltct">
+              </div>
+
+              <div class="form-group">
+                <label>Any Other Type of Meter</label>
+                <input type="text" id="other_meter">
+              </div>
+
+              <div class="form-group">
+                <label>Remarks</label>
+                <textarea id="remarks"></textarea>
+              </div>
+
+              <div class="form-group">
+                <label>Supervisor Name *</label>
+                <input type="text" id="supervisor_name" required>
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="submit-section">
+        <button type="submit" class="btn-primary">
+          <i class="fas fa-paper-plane"></i> Submit
+        </button>
+      </div>
+
+    </form>
+
+  </div>
+</section>
+
+</main>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <p>&copy; 2025 DataPro System</p>
+  </div>
+</footer>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+  const SUPABASE_URL = "https://lmjuchokvqwaozhrawgh.supabase.co";
+  const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtanVjaG9rdnF3YW96aHJhd2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5OTYxOTgsImV4cCI6MjA4MTU3MjE5OH0._eRy72ZfRBINluNn_penTibl9rUWdaAcec6b5N-oxYg";
+
+  const supabaseClient = supabase.createClient(
+  "https://lmjuchokvqwaozhrawgh.supabase.co",
+  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImxtanVjaG9rdnF3YW96aHJhd2doIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU5OTYxOTgsImV4cCI6MjA4MTU3MjE5OH0._eRy72ZfRBINluNn_penTibl9rUWdaAcec6b5N-oxYg",
+
+);
+
+
+  const form = document.getElementById("readingForm");
+
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const data = {
+      zone: document.getElementById("zone").value,
+      address: document.getElementById("address").value,
+      contact_number: document.getElementById("contact_number").value,
+      contact_person: document.getElementById("contact_person").value,
+      meter_2_number: document.getElementById("meter_2_number").value,
+      count_1ph: Number(document.getElementById("count_1ph").value) || 0,
+count_3ph: Number(document.getElementById("count_3ph").value) || 0,
+count_wc: Number(document.getElementById("count_wc").value) || 0,
+count_ltct: Number(document.getElementById("count_ltct").value) || 0,
+
+      other_meter: document.getElementById("other_meter").value,
+      remarks: document.getElementById("remarks").value,
+      supervisor_name: document.getElementById("supervisor_name").value
+    };
+
+    const { error } = await supabaseClient.from("records3").insert([data]);
+
+    if (error) {
+      alert("❌ Submission Failed");
+      console.error(error);
+    } else {
+      alert("✅ Submitted Successfully");
+      form.reset();
+    }
+  });
+</script>
+
+</body>
+</html>

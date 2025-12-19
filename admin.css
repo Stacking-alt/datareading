@@ -1,0 +1,184 @@
+/* =====================
+   ADMIN GLOBAL
+===================== */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Segoe UI", sans-serif;
+}
+
+body {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+/* =====================
+   ADMIN NAVBAR
+===================== */
+.admin-navbar {
+  background: linear-gradient(90deg, #0f172a, #1e293b);
+  padding: 14px 0;
+}
+
+.admin-nav-container {
+  width: 92%;
+  max-width: 1300px;
+  margin: auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.admin-logo {
+  color: #e5e7eb;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.admin-actions button {
+  background: #2563eb;
+  border: none;
+  color: #fff;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  margin-left: 8px;
+}
+
+.admin-actions button:last-child {
+  background: #dc2626;
+}
+
+.admin-actions button:hover {
+  opacity: 0.9;
+}
+
+/* =====================
+   DASHBOARD HEADER
+===================== */
+.dashboard-header {
+  width: 92%;
+  max-width: 1300px;
+  margin: 25px auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.dashboard-header h2 {
+  font-size: 24px;
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.dashboard-header .btn-download {
+  background: #16a34a;
+  color: #fff;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.dashboard-header .btn-download:hover {
+  background: #15803d;
+}
+
+/* =====================
+   TABLE CONTAINER
+===================== */
+.table-container {
+  width: 92%;
+  max-width: 1300px;
+  margin: 30px auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+  overflow-x: auto;
+}
+
+/* =====================
+   DATA TABLE
+===================== */
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+
+thead {
+  background: #1e40af;
+  color: black;
+}
+
+thead th {
+  padding: 14px 12px;
+  text-align: left;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+tbody td {
+  padding: 12px;
+  border-bottom: 1px solid #e5e7eb;
+  white-space: nowrap;
+  color: #0f172a;
+}
+
+tbody tr:nth-child(even) {
+  background: #f8fafc;
+}
+
+tbody tr:hover {
+  background: #dbeafe;
+}
+
+/* =====================
+   DATE & TIME TAG
+===================== */
+.time-badge {
+  background: #dcfce7;
+  color: #166534;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.date-badge {
+  background: #e0f2fe;
+  color: #075985;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+/* =====================
+   NO DATA
+===================== */
+.no-data {
+  text-align: center;
+  padding: 30px;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* =====================
+   RESPONSIVE
+===================== */
+@media (max-width: 900px) {
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+
+  .admin-actions button {
+    font-size: 12px;
+    padding: 6px 10px;
+  }
+}
